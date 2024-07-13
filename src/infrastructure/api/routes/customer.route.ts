@@ -7,15 +7,22 @@ import CustomerPresenter from "../presenters/customer.presenter";
 export const customerRoute = express.Router();
 
 customerRoute.post("/", async (req: Request, res: Response) => {
+  const { name, address } = req.body;
+  
+  if (!name || !address) {
+    res.status(400).send("Missing required fields");
+    return;
+  }
+  
   const usecase = new CreateCustomerUseCase(new CustomerRepository());
   try {
     const customerDto = {
-      name: req.body.name,
+      name,
       address: {
-        street: req.body.address.street,
-        city: req.body.address.city,
-        number: req.body.address.number,
-        zip: req.body.address.zip,
+        street: address.street,
+        city: address.city,
+        number: address.number,
+        zip: address.zip,
       },
     };
     const output = await usecase.execute(customerDto);
